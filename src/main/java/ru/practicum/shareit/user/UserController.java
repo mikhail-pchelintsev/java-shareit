@@ -1,6 +1,5 @@
 package ru.practicum.shareit.user;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -8,12 +7,17 @@ import java.util.List;
 /**
  * TODO Sprint add-controllers.
  */
+
 @RestController
 @RequestMapping(path = "/users")
-@RequiredArgsConstructor
+
 public class UserController {
 
     private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping
     public User createUser(@RequestBody User user) {
@@ -21,7 +25,7 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> findAll(){
+    public List<User> findAll() {
         return userService.findAll();
     }
 

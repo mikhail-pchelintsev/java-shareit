@@ -1,20 +1,23 @@
 package ru.practicum.shareit.user;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.regex.Pattern;
 
 @Service
-@RequiredArgsConstructor
 public class UserService {
 
     private final InMemoryUserRepository userRepository;
 
+    public UserService(InMemoryUserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     public boolean userExists(Long userId) {
         return userRepository.existsById(userId);
     }
+
     public User addUser(User user) {
         if (userRepository.findByEmail(user.getEmail()) != null) {
             throw new IllegalArgumentException("Email already exists");
@@ -50,7 +53,7 @@ public class UserService {
         return existingUser;
     }
 
-    public List<User> findAll(){
+    public List<User> findAll() {
         return userRepository.findAll();
     }
 

@@ -1,6 +1,5 @@
 package ru.practicum.shareit.item;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -9,12 +8,18 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserService;
 
 import java.util.List;
-@RequiredArgsConstructor
+
+
 @Service
 public class ItemService {
 
     private final InMemoryItemRepository itemRepository;
     private final UserService userService;
+
+    public ItemService(InMemoryItemRepository itemRepository, UserService userService) {
+        this.itemRepository = itemRepository;
+        this.userService = userService;
+    }
 
     public Item addItem(Item item, Long userId) {
         if (item.getName() == null || item.getName().isEmpty() ||

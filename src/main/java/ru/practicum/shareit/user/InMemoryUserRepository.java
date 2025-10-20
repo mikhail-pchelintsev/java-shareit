@@ -28,13 +28,11 @@ public class InMemoryUserRepository {
     }
 
     public void delete(Long id) {
-        //User user = findById(id);
-        //users.removeIf(user1 -> user1.getId().equals(id));
-        //user.setDeleted(true);
-        //users.add(user);
+        users.removeIf(user1 -> user1.getId().equals(id));
+
     }
 
-    // ДОБАВЬТЕ ЭТОТ МЕТОД
+
     public boolean existsById(Long userId) {
         return users.stream().anyMatch(user -> user.getId().equals(userId));
     }
