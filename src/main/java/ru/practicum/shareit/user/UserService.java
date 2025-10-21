@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 public class UserService {
 
     private final InMemoryUserRepository userRepository;
+    private static final String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@(.+)$";
 
     public UserService(InMemoryUserRepository userRepository) {
         this.userRepository = userRepository;
@@ -66,8 +67,7 @@ public class UserService {
     }
 
     private boolean isValidEmail(String email) {
-        String emailRegex = "^[A-Za-z0-9+_.-]+@(.+)$";
-        Pattern pattern = Pattern.compile(emailRegex);
+        Pattern pattern = Pattern.compile(EMAIL_PATTERN);
         return pattern.matcher(email).matches();
     }
 }
