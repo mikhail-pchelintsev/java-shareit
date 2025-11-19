@@ -1,12 +1,51 @@
 package ru.practicum.shareit.item;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Item;
+
+
+import java.util.List;
 
 /**
  * TODO Sprint add-controllers.
  */
+
 @RestController
 @RequestMapping("/items")
 public class ItemController {
+    private final ItemService itemService;
+
+    public ItemController(ItemService itemService) {
+        this.itemService = itemService;
+    }
+
+
+    @PostMapping
+    public Item createItem(@RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
+        Item item = new Item(itemDto.getId(), itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable(), userId);
+        return itemService.addItem(item, userId);
+
+    }
+
+    @PatchMapping("/{itemId}")
+    public Item updateItem(@PathVariable Long itemId, @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") Long userId) {
+        Item item = new Item(itemDto.getId(), itemDto.getName(), itemDto.getDescription(), itemDto.getAvailable(), userId);
+        return itemService.updateItem(itemId, item, userId);
+    }
+
+    @GetMapping("/{itemId}")
+    public Item getItem(@PathVariable Long itemId) {
+        return itemService.getItem(itemId);
+    }
+
+    @GetMapping
+    public List<Item> getAllItemsFromUser(@RequestHeader("X-Sharer-User-Id") Long userId) {
+        return itemService.getAllItemsByOwner(userId);
+    }
+
+    @GetMapping("/search")
+    public List<Item> searchItems(@RequestParam String text) {
+        return itemService.searchItems(text);
+    }
 }
