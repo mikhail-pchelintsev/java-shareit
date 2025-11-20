@@ -32,7 +32,7 @@ public class ItemService {
         userService.getUser(userId);
         item.setOwnerId(userId);
 
-        if(item.getAvailable() == null) {
+        if (item.getAvailable() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Availability must be specified");
         }
 
