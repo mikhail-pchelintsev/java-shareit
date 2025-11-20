@@ -17,8 +17,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             " >= :now ORDER BY b.start_ts DESC", nativeQuery = true)
     List<Booking> findByBookerIdAndCurrent(@Param("bookerId") Long bookerId, @Param("now") LocalDateTime now);
 
-    @Query(value = "SELECT * FROM bookings b WHERE b.booker_id = :bookerId AND b.end_ts < :now ORDER BY b.start_ts DESC"
-            , nativeQuery = true)
+    @Query(value = "SELECT * FROM bookings b WHERE b.booker_id = :bookerId AND b.end_ts < :now ORDER BY b.start_ts" +
+            " DESC", nativeQuery = true)
     List<Booking> findByBookerIdAndPast(@Param("bookerId") Long bookerId, @Param("now") LocalDateTime now);
 
     @Query(value = "SELECT * FROM bookings b WHERE b.booker_id = :bookerId AND b.start_ts > :now ORDER BY b.start_ts" +
@@ -50,11 +50,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             " b.status = :status ORDER BY b.start_ts DESC", nativeQuery = true)
     List<Booking> findByOwnerIdAndStatus(@Param("ownerId") Long ownerId, @Param("status") String status);
 
-    @Query(value = "SELECT * FROM bookings b WHERE b.item_id = :itemId AND b.end_ts < :now AND b.status = 'APPROVED' ORDER BY b.end_ts DESC",
-            nativeQuery = true)
+    @Query(value = "SELECT * FROM bookings b WHERE b.item_id = :itemId AND b.end_ts < :now AND b.status = 'APPROVED'" +
+            " ORDER BY b.end_ts DESC", nativeQuery = true)
     List<Booking> findByItemIdAndEndBeforeOrderByEndDesc(@Param("itemId") Long itemId, @Param("now") LocalDateTime now);
 
-    @Query(value = "SELECT * FROM bookings b WHERE b.item_id = :itemId AND b.start_ts > :now AND b.status = 'APPROVED' ORDER BY b.start_ts ASC",
-            nativeQuery = true)
-    List<Booking> findByItemIdAndStartAfterOrderByStartAsc(@Param("itemId") Long itemId, @Param("now") LocalDateTime now);
+    @Query(value = "SELECT * FROM bookings b WHERE b.item_id = :itemId AND b.start_ts > :now AND" +
+            " b.status = 'APPROVED'" + " ORDER BY b.start_ts ASC", nativeQuery = true)
+    List<Booking> findByItemIdAndStartAfterOrderByStartAsc(@Param("itemId") Long itemId,
+                                                           @Param("now") LocalDateTime now);
 }
