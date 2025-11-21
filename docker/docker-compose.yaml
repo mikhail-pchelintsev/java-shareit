@@ -21,7 +21,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
-      - "8082:80"
+      - "8082:81"
     networks:
       - postgres_network
     restart: unless-stopped
