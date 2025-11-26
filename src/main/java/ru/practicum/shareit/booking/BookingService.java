@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking;
 
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,19 +20,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class BookingService {
     private final BookingRepository bookingRepository;
     private final ItemRepository itemRepository;
     private final UserService userService;
-
-    public BookingService(BookingRepository bookingRepository,
-                          ItemRepository itemRepository,
-                          UserService userService) {
-        this.bookingRepository = bookingRepository;
-        this.itemRepository = itemRepository;
-        this.userService = userService;
-    }
 
     public BookingResponseDto createBooking(Long userId, BookingRequestDto req) {
         User user = userService.getUser(userId);
