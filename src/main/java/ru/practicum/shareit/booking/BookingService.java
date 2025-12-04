@@ -19,13 +19,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class BookingService {
     private final BookingRepository bookingRepository;
     private final ItemRepository itemRepository;
     private final UserService userService;
 
+    @Transactional
     public BookingResponseDto createBooking(Long userId, BookingRequestDto req) {
         User user = userService.getUser(userId);
         Item item = itemRepository.findById(req.getItemId())
@@ -51,6 +52,7 @@ public class BookingService {
         return toDto(booking);
     }
 
+    @Transactional
     public BookingResponseDto approveBooking(Long ownerId, Long bookingId, boolean approved) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found"));
