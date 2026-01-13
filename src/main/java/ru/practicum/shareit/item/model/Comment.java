@@ -2,19 +2,17 @@ package ru.practicum.shareit.item.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-controllers.
- */
 @Entity
-@Table(name = "items")
+@Table(name = "comments")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(onlyExplicitlyIncluded = true)
-public class Item {
+public class Comment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,13 +21,15 @@ public class Item {
     private Long id;
 
     @ToString.Include
-    private String name;
+    @Column(columnDefinition = "TEXT", nullable = false)
+    private String text;
 
-    @Column(columnDefinition = "TEXT")
-    private String description;
+    @Column(name = "item_id", nullable = false)
+    private Long itemId;
 
-    private Boolean available;
+    @Column(name = "author_id", nullable = false)
+    private Long authorId;
 
-    @Column(name = "owner_id")
-    private Long ownerId;
+    @Column(name = "created_ts", nullable = false)
+    private LocalDateTime created;
 }

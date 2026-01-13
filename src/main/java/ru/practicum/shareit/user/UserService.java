@@ -1,73 +1,55 @@
 package ru.practicum.shareit.user;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.regex.Pattern;
 
 @Service
+@Transactional
 public class UserService {
+    private final UserRepository userRepository;
 
-    private final InMemoryUserRepository userRepository;
-    private static final String EMAIL_PATTERN = "^[A-Za-z0-9+_.-]+@(.+)$";
-
-    public UserService(InMemoryUserRepository userRepository) {
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public boolean userExists(Long userId) {
-        return userRepository.existsById(userId);
-    }
-
     public User addUser(User user) {
-        if (userRepository.findByEmail(user.getEmail()) != null) {
-            throw new IllegalArgumentException("Email already exists");
+        if (user.getEmail().isBlank() || !user.getEmail().contains("@")) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email required");
         }
-
-        if (!isValidEmail(user.getEmail())) {
-            throw new IllegalArgumentException("Invalid email format");
+        User byEmail = userRepository.findByEmail(user.getEmail());
+        if (byEmail != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
         }
-
         return userRepository.save(user);
     }
 
-    public User updateUser(Long userId, User user) {
-        User existingUser = userRepository.findById(userId);
-        if (existingUser == null) {
-            throw new IllegalArgumentException("User not found");
-        }
-
-        if (user.getName() != null) {
-            existingUser.setName(user.getName());
-        }
-
-        if (user.getEmail() != null) {
-            if (userRepository.findByEmail(user.getEmail()) != null) {
-                throw new IllegalArgumentException("Email already exists");
-            }
-            if (!isValidEmail(user.getEmail())) {
-                throw new IllegalArgumentException("Invalid email format");
-            }
-            existingUser.setEmail(user.getEmail());
-        }
-
-        return existingUser;
+    public User getUser(Long id) {
+        return userRepository.findById(id).orElseThrow(() ->
+                new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
-    public User getUser(Long userId) {
-        return userRepository.findById(userId);
+    public User updateUser(Long userId, User patch) {
+        User existing = getUser(userId);
+        if (patch.getName() != null) existing.setName(patch.getName());
+        if (patch.getEmail() != null) {
+            User byEmail = userRepository.findByEmail(patch.getEmail());
+            if (byEmail != null && !byEmail.getId().equals(userId)) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+            }
+            existing.setEmail(patch.getEmail());
+        }
+        return userRepository.save(existing);
     }
 
     public void deleteUser(Long userId) {
-        userRepository.delete(userId);
-    }
-
-    private boolean isValidEmail(String email) {
-        Pattern pattern = Pattern.compile(EMAIL_PATTERN);
-        return pattern.matcher(email).matches();
+        userRepository.deleteById(userId);
     }
 }
